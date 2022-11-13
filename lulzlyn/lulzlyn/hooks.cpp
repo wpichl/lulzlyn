@@ -20,7 +20,7 @@ bool hooks::initialize()
 		logger::log(logger::log_type::ALERT, "initialized minhook");
 	}
 
-	std::uintptr_t* screenshot_target = utilities::pattern_scan(NULL, "41 57 41 56 41 54 56 57 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 31 E0 48 89 44 24 ? 0F 28 05");
+	std::uint8_t* screenshot_target = utilities::pattern_scan(NULL, "41 57 41 56 41 54 56 57 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 31 E0 48 89 44 24 ? 0F 28 05");
 
 	hooks::screenshot::nyanmap = utilities::load_bitmap();
 

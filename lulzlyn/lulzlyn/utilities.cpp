@@ -10,10 +10,9 @@
 
 #include "nyan.hpp"
 
-static std::vector<std::uint8_t> pattern_to_byte(const char* pattern)
+static std::vector<int> pattern_to_byte(const char* pattern)
 {
-	std::vector<std::uint8_t> bytes = std::vector<std::uint8_t>();
-
+	std::vector<int> bytes;
 	char* start = const_cast<char*>(pattern);
 	char* end = const_cast<char*>(pattern) + std::strlen(pattern);
 
@@ -32,16 +31,15 @@ static std::vector<std::uint8_t> pattern_to_byte(const char* pattern)
 		}
 		else
 		{
-			bytes.push_back(static_cast<std::uint8_t>(std::strtoul(current, &current, 16)));
+			bytes.push_back(std::strtoul(current, &current, 16));
 		}
 	}
-
 	return bytes;
 }
 
-std::uintptr_t* utilities::pattern_scan(const char* module_name, const char* signature)
+std::uint8_t* utilities::pattern_scan(const char* module_name, const char* signature)
 {
-	HMODULE module_handle = GetModuleHandle(module_name);
+	HMODULE module_handle = GetModuleHandleA(module_name);
 
 	if (!module_handle)
 	{
@@ -49,14 +47,14 @@ std::uintptr_t* utilities::pattern_scan(const char* module_name, const char* sig
 	}
 
 	PIMAGE_DOS_HEADER dos_header = reinterpret_cast<PIMAGE_DOS_HEADER>(module_handle);
-	PIMAGE_NT_HEADERS nt_headers = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uintptr_t>(module_handle) + dos_header->e_lfanew);
+	PIMAGE_NT_HEADERS nt_headers = reinterpret_cast<PIMAGE_NT_HEADERS>(reinterpret_cast<std::uint8_t*>(module_handle) + dos_header->e_lfanew);
 
 	unsigned long size_of_image = nt_headers->OptionalHeader.SizeOfImage;
-	std::vector<std::uint8_t> pattern_bytes = pattern_to_byte(signature);
-	std::uintptr_t* image_base = reinterpret_cast<std::uintptr_t*>(module_handle);
+	std::vector<int> pattern_bytes = pattern_to_byte(signature);
+	std::uint8_t* image_base = reinterpret_cast<std::uint8_t*>(module_handle);
 
 	std::size_t pattern_size = pattern_bytes.size();
-	std::uint8_t* array_of_bytes = pattern_bytes.data();
+	int* array_of_bytes = pattern_bytes.data();
 
 	for (unsigned long i = 0ul; i < size_of_image - pattern_size; i++)
 	{
