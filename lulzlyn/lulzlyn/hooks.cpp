@@ -46,12 +46,12 @@ bool hooks::initialize()
 
 	if (MH_CreateHook(BitBlt, &hooks::bitblit::hook, reinterpret_cast<void**>(&bitblit_original)) != MH_OK)
 	{
-		logger::log(logger::log_type::FAILURE, "failed to create screenshot hook");
+		logger::log(logger::log_type::FAILURE, "failed to create bitblt hook");
 		return false;
 	}
 	else
 	{
-		logger::log(logger::log_type::ALERT, "created screenshot hook");
+		logger::log(logger::log_type::ALERT, "created bitblt hook");
 	}
 
 	if (MH_EnableHook(MH_ALL_HOOKS) != MH_OK)
